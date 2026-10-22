@@ -1,1 +1,1267 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="34-second frame-accurate anatomy of a generic fiber-laser cutter: doped fiber, focusing head, assist gas, kerf, and gantry. Explanatory only. No power or speed claims.">
+<meta property="og:title" content="Fiber laser cutting, fiber-delivered variant">
+<meta property="og:description" content="Frame-accurate anatomy of a generic fiber-laser cutter. Fiber, focus, assist gas, cut zone, and machine. Explanatory only.">
+<meta property="og:type" content="website">
+<title>Fiber laser cutting, fiber-delivered variant</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<style>
+  :root {
+    --stage: #0B1019;
+    --struct: #344257;
+    --bone: #E6EDF5;
+    --dim: #93A1B5;
+    --cyan: #00E5FF;
+    --gold: #FFD166;
+    --violet: #9D4EDD;
+    --sans: "Space Grotesk", Inter, "DejaVu Sans", "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", "DejaVu Sans Mono", Cousine, ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--stage); color: var(--bone); }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--sans);
+  }
+  header, footer { padding: 12px 20px; }
+  header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--struct);
+  }
+  .kicker, .mono, .legend, .hint, .disclaimer, .rail button, #fr, #seg {
+    font-family: var(--mono);
+  }
+  .kicker {
+    margin: 0 0 2px;
+    color: var(--cyan);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  h1 { margin: 0; font-size: 22px; font-weight: 560; letter-spacing: -0.02em; }
+  .deck { margin: 2px 0 0; color: var(--dim); font-size: 13px; }
+  .readout { text-align: right; }
+  #tc { margin: 0; font-variant-numeric: tabular-nums; font-size: 22px; font-family: var(--mono); }
+  #fr, #seg { margin: 0; color: var(--dim); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  #seg { color: var(--bone); }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: 8px 12px;
+  }
+  canvas {
+    width: min(100%, calc((100vh - 292px) * 16 / 9));
+    max-height: calc(100vh - 292px);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    background: var(--stage);
+    border: 1px solid var(--struct);
+  }
+  footer { border-top: 1px solid var(--struct); display: grid; gap: 8px; }
+  .rail { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .rail button, .transport button, summary {
+    background: transparent;
+    color: var(--dim);
+    border: 0;
+    padding: 6px 0;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .rail button[aria-current="true"] { color: var(--bone); box-shadow: inset 0 2px 0 var(--cyan); }
+  .transport { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+  .transport button {
+    border: 1px solid var(--struct);
+    min-width: 88px;
+    min-height: 36px;
+    color: var(--bone);
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--struct);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--cyan);
+    border: 0;
+    border-radius: 0;
+  }
+  #caption { margin: 0; max-width: 78rem; font-size: 15px; line-height: 1.4; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; color: var(--dim); font-size: 11px; letter-spacing: 0.04em; }
+  .legend i { display: inline-block; width: 18px; height: 8px; margin-right: 6px; vertical-align: baseline; }
+  .sw-cyan { background: var(--cyan); }
+  .sw-gold { background: var(--gold); }
+  .sw-violet { background: var(--violet); }
+  .sw-dash { background: repeating-linear-gradient(90deg, var(--bone) 0 4px, transparent 4px 7px); }
+  .disclaimer, .hint { margin: 0; color: var(--dim); font-size: 11px; line-height: 1.45; }
+  details { color: var(--dim); font-size: 13px; line-height: 1.45; }
+  summary { color: var(--bone); padding-left: 0; }
+  details a { color: var(--cyan); }
+  table { border-collapse: collapse; margin-top: 8px; font-family: var(--mono); font-size: 12px; }
+  th, td { border-bottom: 1px solid var(--struct); text-align: left; padding: 4px 10px 4px 0; vertical-align: top; }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  @media (max-width: 720px) {
+    header { flex-direction: column; align-items: flex-start; }
+    .readout { text-align: left; }
+    canvas { width: 100%; max-height: none; }
+    #caption { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <p class="kicker">Industrial laser systems</p>
+    <h1>Fiber laser cutting</h1>
+    <p class="deck">Anatomy of the fiber-delivered variant. Generic machine. No power or speed.</p>
+  </div>
+  <div class="readout">
+    <p id="tc">00:00.0</p>
+    <p id="fr">Frame 0000 / 1019</p>
+    <p id="seg">Fiber and head</p>
+  </div>
+</header>
+<main>
+  <canvas id="stage" width="3200" height="1800" role="img" aria-labelledby="caption"></canvas>
+</main>
+<footer>
+  <nav class="rail" aria-label="Timeline segments">
+    <button type="button" data-frame="0">0s Fiber and head</button>
+    <button type="button" data-frame="150">5s Beam focus</button>
+    <button type="button" data-frame="300">10s Assist gas</button>
+    <button type="button" data-frame="510">17s Cut quality</button>
+    <button type="button" data-frame="750">25s Machine</button>
+  </nav>
+  <div class="transport">
+    <button type="button" id="play">Play</button>
+    <input id="scrub" type="range" min="0" max="1019" value="0" aria-label="Frame" aria-valuemin="0" aria-valuemax="1019">
+  </div>
+  <p id="caption" aria-live="polite"></p>
+  <ul class="legend">
+    <li><i class="sw-cyan"></i>Cyan: primary pathway. Overlay, not visible light.</li>
+    <li><i class="sw-gold"></i>Gold: actuation or energy.</li>
+    <li><i class="sw-violet"></i>Violet: sensing, or a state change in the metal.</li>
+    <li><i class="sw-dash"></i>Dashed: diagram. Solid metal: hardware in section.</li>
+  </ul>
+  <p class="disclaimer">Explanatory anatomy, not a certified drawing, simulation, setup sheet, or safety procedure. An open industrial cutting beam is a Class 4 laser hazard. Mechanism reference: Laser Institute of America, <a href="https://www.lia.org/">lia.org</a>. Camera moves, palette, cutaways, and timing are illustrative. Verify before publication.</p>
+  <p class="hint" id="keys">Space plays. Left and right step one frame. Shift plus arrow jumps one second. Keys 1 to 5 jump segments. Home and End jump the film.</p>
+  <details>
+    <summary>What the 1,020 frames show</summary>
+    <p>One continuous side elevation. The camera trucks and zooms. Parts are not pulled apart. Hatched areas are the cut face of a section. Near covers are left off so the head, fiber, and gantry stay visible.</p>
+    <table>
+      <thead><tr><th>Frames</th><th>Time</th><th>Shot</th></tr></thead>
+      <tbody>
+        <tr><td>0-149</td><td>0-5 s</td><td>Reveal the source, the delivery fiber, and the head. The fiber still enters the head at the end of the shot.</td></tr>
+        <tr><td>150-299</td><td>5-10 s</td><td>Push into a longitudinal section. Collimator, focusing optic, protective window, and a schematic focus envelope. The fiber inlet stays in frame.</td></tr>
+        <tr><td>300-509</td><td>10-17 s</td><td>Truck to the nozzle. Coaxial assist gas, valve actuation, and capacitive standoff. The focus remains at the top of the shot.</td></tr>
+        <tr><td>510-749</td><td>17-25 s</td><td>Macro section of the kerf, labeled as a scale change and as slow motion. Beam and gas still enter from the nozzle.</td></tr>
+        <tr><td>750-1019</td><td>25-34 s</td><td>Pull back to the flatbed. Frames 960-1019 hold on the complete machine. The plan inset is a second view of a finished contour, time-compressed.</td></tr>
+      </tbody>
+    </table>
+    <p>Process, stated generically. Diode light pumps a ytterbium-doped fiber. The industrial beam is near-infrared, about a 1 micrometer class, and it is invisible. A passive fiber delivers it to a head that collimates and focuses it. Assist gas leaves the nozzle around the beam and expels molten metal. Inert gas only clears the melt (fusion cutting). Oxygen can react with hot carbon steel and add heat (reactive fusion cutting). Air is used on some jobs. Which gas fits is a setup choice. This page specifies none.</p>
+    <p>Cut marks you can name without measuring them: kerf, taper, striations on the cut face, dross where melt resolidified, and a heat-affected zone beside the kerf. Nothing here is a tolerance, a feed rate, or a power.</p>
+    <p>The capacitive standoff sensor and the Z actuator are the usual pairing on a gantry flatbed. Other sensors exist. Loop electronics are not shown. Jet shocks, absorption, and gas dynamics are not simulated. Dashed curves show where something goes, not a calculated field.</p>
+    <p>Reference scope. <a href="https://www.lia.org/">Laser Institute of America</a> publishes the literature this architecture comes from, including the LIA Handbook of Laser Materials Processing and the LIA Guide to High Power Laser Cutting. This page was not checked page by page against those books. It is a consolidated working brief, not a certified engineering reference.</p>
+  </details>
+</footer>
+<script>
+"use strict";
+(function () {
+  var STAGE_W = 1600;
+  var STAGE_H = 900;
+  var LAST = 1019;
+  var COL = {
+    stage: "#0B1019",
+    struct: "#344257",
+    steel: "#243140",
+    steelHi: "#4c5e76",
+    bone: "#E6EDF5",
+    dim: "#93A1B5",
+    cyan: "#00E5FF",
+    gold: "#FFD166",
+    violet: "#9D4EDD"
+  };
+  var G = {
+    headX: 780,
+    sheetTop: 436,
+    sheetTh: 58,
+    sheetX0: -20,
+    sheetX1: 1180,
+    kerfTop: 10,
+    kerfBot: 7.5,
+    nozzleTip: 418,
+    nozzleY: 352
+  };
+  var SEGMENTS = [
+    { start: 0, end: 149, title: "Fiber and head", caption: "Pump diodes feed a ytterbium-doped fiber. The delivery fiber carries near-infrared light into the head. Cyan is an overlay. The beam is invisible." },
+    { start: 150, end: 299, title: "Beam focus", caption: "A collimator and a focusing optic form a waist at the top of the sheet. The envelope is a diagram, not a measured caustic. The fiber still enters the head." },
+    { start: 300, end: 509, title: "Assist gas", caption: "Gas leaves the nozzle around the beam and blows melt through the kerf. Inert gas only clears melt. Oxygen can add heat on carbon steel. Dashed curves are not a flow simulation." },
+    { start: 510, end: 749, title: "Cut quality", caption: "Enlarged, slowed section. Taper, the heat-affected zone, dross, and striations are named. Proportions are not measured. Beam and gas still enter from the nozzle." },
+    { start: 750, end: 1019, title: "Complete machine", caption: "Back to the flatbed. Fiber delivery is the variant: the beam arrives by fiber, not by a flying-mirror path. The plan is a finished contour with time compressed. No power or feed rate." }
+  ];
+  var CAMERA_KEYS = [
+    { f: 0, x: 140, y: 530, w: 2320 },
+    { f: 149, x: 360, y: 430, w: 1560 },
+    { f: 299, x: 800, y: 336, w: 740 },
+    { f: 509, x: 824, y: 424, w: 530 },
+    { f: 749, x: 786, y: 488, w: 310 },
+    { f: 960, x: 390, y: 530, w: 2100 },
+    { f: 1019, x: 390, y: 530, w: 2100 }
+  ];
+  var LABELS = [
+    { a: 36, b: 155, x: -380, y: 160, dx: 36, dy: -34, color: COL.gold, text: "Pump diodes", minW: 900 },
+    { a: 36, b: 155, x: -352, y: 400, dx: -20, dy: 26, color: COL.cyan, text: "Doped fiber", minW: 900 },
+    { a: 48, b: 155, x: -230, y: 210, dx: 18, dy: -32, color: COL.cyan, text: "Bragg gratings", minW: 900 },
+    { a: 40, b: 168, x: 220, y: 130, dx: 0, dy: -32, color: COL.cyan, text: "Delivery fiber", minW: 800 },
+    { a: 40, b: 160, x: 780, y: 200, dx: 48, dy: -46, color: COL.bone, text: "Cutting head", minW: 800 },
+    { a: 175, b: 330, x: 780, y: 168, dx: -138, dy: -28, color: COL.cyan, text: "From the fiber", maxW: 1100 },
+    { a: 185, b: 330, x: 742, y: 228, dx: -150, dy: -4, color: COL.bone, text: "Collimator", maxW: 1100 },
+    { a: 185, b: 330, x: 820, y: 314, dx: 70, dy: -8, color: COL.bone, text: "Focusing optic", maxW: 1100 },
+    { a: 195, b: 330, x: 760, y: 392, dx: -148, dy: 8, color: COL.cyan, text: "Focus envelope", maxW: 1000 },
+    { a: 195, b: 330, x: 748, y: 340, dx: -160, dy: 8, color: COL.bone, text: "Protective window", maxW: 1100 },
+    { a: 175, b: 330, x: 855, y: 230, dx: 36, dy: -8, color: COL.gold, text: "Z actuation", maxW: 1100, minW: 480 },
+    { a: 330, b: 545, x: 780, y: 360, dx: -132, dy: -36, color: COL.cyan, text: "Beam in the nozzle", maxW: 820 },
+    { a: 330, b: 545, x: 900, y: 372, dx: 24, dy: -32, color: COL.gold, text: "Gas valve", maxW: 820 },
+    { a: 350, b: 545, x: 804, y: 455, dx: 56, dy: 22, color: COL.bone, text: "Coaxial gas", maxW: 700 },
+    { a: 350, b: 545, x: 754, y: 426, dx: -28, dy: 28, color: COL.violet, text: "Standoff sensor", maxW: 760 },
+    { a: 545, b: 790, x: 768, y: 466, dx: -86, dy: 0, color: COL.bone, text: "Kerf", maxW: 460 },
+    { a: 545, b: 790, x: 812, y: 462, dx: 36, dy: -8, color: COL.violet, text: "Heat-affected zone", maxW: 460 },
+    { a: 565, b: 790, x: 798, y: 498, dx: 36, dy: 18, color: COL.bone, text: "Dross", maxW: 460 },
+    { a: 565, b: 790, x: 770, y: 520, dx: -96, dy: 12, color: COL.bone, text: "Melt ejection", maxW: 460 },
+    { a: 900, b: 1019, hold: true, x: -360, y: 160, dx: 10, dy: -34, color: COL.bone, text: "Source", minW: 1500 },
+    { a: 900, b: 1019, hold: true, x: 520, y: 120, dx: 0, dy: -30, color: COL.bone, text: "Gantry", minW: 1500 },
+    { a: 900, b: 1019, hold: true, x: 1000, y: 620, dx: 8, dy: 18, color: COL.bone, text: "Slat bed", minW: 1500 },
+    { a: 900, b: 1019, hold: true, x: 200, y: 760, dx: 0, dy: 22, color: COL.bone, text: "Exhaust", minW: 1500 },
+    { a: 900, b: 1019, hold: true, x: 300, y: 150, dx: 0, dy: -28, color: COL.cyan, text: "Umbilical", minW: 1500 },
+    { a: 910, b: 1019, hold: true, x: 820, y: 250, dx: 36, dy: -28, color: COL.bone, text: "Head", minW: 1500 }
+  ];
+
+  var canvas = document.getElementById("stage");
+  var ctx = canvas.getContext("2d");
+  var playBtn = document.getElementById("play");
+  var scrub = document.getElementById("scrub");
+  var captionEl = document.getElementById("caption");
+  var params = new URLSearchParams(location.search);
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var debug = params.get("debug") === "1";
+  var frame = clamp(parseInt(params.get("frame") || "0", 10) || 0, 0, LAST);
+  var playing = !params.has("frame") && !reduce;
+  var playOrigin = 0;
+  var playFrame0 = frame;
+  var raf = 0;
+  var scrubbing = false;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function smoother(t) {
+    var x = clamp(t, 0, 1);
+    return x * x * x * (x * (x * 6 - 15) + 10);
+  }
+  function windowAlpha(f, a, b, fade, hold) {
+    if (f < a || f > b) return 0;
+    var fin = f - a;
+    if (fin < fade) {
+      var t = fin / fade;
+      return t * t * (3 - 2 * t);
+    }
+    if (!hold) {
+      var fout = b - f;
+      if (fout < fade) {
+        var t2 = Math.max(fout, 0) / fade;
+        return t2 * t2 * (3 - 2 * t2);
+      }
+    }
+    return 1;
+  }
+  function loom(cam, wide, tight) {
+    if (cam.w >= wide) return 0;
+    if (cam.w <= tight) return 1;
+    var t = (wide - cam.w) / (wide - tight);
+    return t * t * (3 - 2 * t);
+  }
+  function segmentAt(f) {
+    for (var i = 0; i < SEGMENTS.length; i++) {
+      if (f >= SEGMENTS[i].start && f <= SEGMENTS[i].end) return SEGMENTS[i];
+    }
+    return SEGMENTS[0];
+  }
+  function cameraAt(f) {
+    var i = 0;
+    while (i < CAMERA_KEYS.length - 2 && f >= CAMERA_KEYS[i + 1].f) i++;
+    var a = CAMERA_KEYS[i];
+    var b = CAMERA_KEYS[i + 1];
+    var e = smoother((f - a.f) / (b.f - a.f));
+    return { x: lerp(a.x, b.x, e), y: lerp(a.y, b.y, e), w: lerp(a.w, b.w, e) };
+  }
+  function motionClock(f) {
+    if (f < 530) return 530;
+    if (f > 900) return 900;
+    return f;
+  }
+  function uOf(cam) { return cam.w / STAGE_W; }
+  function worldToScreen(cam, x, y) {
+    var vh = cam.w * STAGE_H / STAGE_W;
+    return {
+      x: (x - (cam.x - cam.w / 2)) / cam.w * STAGE_W,
+      y: (y - (cam.y - vh / 2)) / vh * STAGE_H
+    };
+  }
+  function beamHalf(y) {
+    var yCol = 228;
+    var yFocus = 314;
+    var yWaist = G.sheetTop + 1;
+    if (y <= yCol) {
+      var t = clamp((y - 158) / (yCol - 158), 0, 1);
+      return 2.3 + t * 5.4;
+    }
+    if (y <= yFocus) return 7.7;
+    if (y <= yWaist) {
+      var t2 = (y - yFocus) / (yWaist - yFocus);
+      var s = t2 * t2 * (3 - 2 * t2);
+      return 7.7 + (1.7 - 7.7) * s;
+    }
+    var div = (y - yWaist) / 86;
+    return 1.7 + div * div * 3.1;
+  }
+  function traceDelivery(c) {
+    c.beginPath();
+    c.moveTo(-200, 236);
+    c.bezierCurveTo(40, 78, 430, 96, G.headX, 152);
+  }
+  function round(c, x, y, w, h, r) {
+    c.beginPath();
+    c.roundRect(x, y, w, h, r);
+  }
+
+  function drawGrid(c, cam) {
+    var u = uOf(cam);
+    var vh = cam.w * STAGE_H / STAGE_W;
+    var x0 = cam.x - cam.w / 2;
+    var x1 = cam.x + cam.w / 2;
+    var y0 = cam.y - vh / 2;
+    var y1 = cam.y + vh / 2;
+    var step = 80;
+    c.save();
+    c.beginPath();
+    c.strokeStyle = "rgba(52,66,87,0.45)";
+    c.lineWidth = u;
+    for (var x = Math.floor(x0 / step) * step; x < x1; x += step) {
+      c.moveTo(x, y0);
+      c.lineTo(x, y1);
+    }
+    for (var y = Math.floor(y0 / step) * step; y < y1; y += step) {
+      c.moveTo(x0, y);
+      c.lineTo(x1, y);
+    }
+    c.stroke();
+    c.restore();
+  }
+  function hatch(c, cam, pathFn) {
+    var u = uOf(cam);
+    var vh = cam.w * STAGE_H / STAGE_W;
+    c.save();
+    c.beginPath();
+    pathFn(c);
+    c.clip();
+    c.beginPath();
+    c.strokeStyle = "rgba(198,210,224,0.18)";
+    c.lineWidth = u;
+    var step = 8 * u;
+    var x0 = cam.x - cam.w;
+    var y0 = cam.y - vh;
+    var span = cam.w * 2 + vh * 2;
+    for (var d = -span; d < span; d += step) {
+      c.moveTo(x0 + d, y0);
+      c.lineTo(x0 + d + vh * 2, y0 + vh * 2);
+    }
+    c.stroke();
+    c.restore();
+  }
+  function metal(c, pathFn, x0, y0, x1, y1) {
+    var g = c.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, "#3a4a5e");
+    g.addColorStop(0.45, "#263242");
+    g.addColorStop(1, "#1a2432");
+    c.fillStyle = g;
+    c.beginPath();
+    pathFn(c);
+    c.fill();
+    c.strokeStyle = COL.struct;
+    c.stroke();
+  }
+
+  function drawMachine(c, cam) {
+    var u = uOf(cam);
+    c.lineJoin = "round";
+    c.lineCap = "round";
+    c.lineWidth = 1.35 * u;
+    c.fillStyle = "#101722";
+    c.fillRect(-700, 860, 2200, 220);
+    c.fillStyle = "#1a2431";
+    c.fillRect(-40, 800, 1300, 62);
+    c.strokeStyle = COL.struct;
+    c.strokeRect(-40, 800, 1300, 62);
+    c.fillStyle = "#182230";
+    c.strokeStyle = COL.struct;
+    c.beginPath();
+    c.rect(40, 700, 1080, 100);
+    c.fill();
+    c.stroke();
+    c.beginPath();
+    c.moveTo(40, 750);
+    c.lineTo(-160, 790);
+    c.lineTo(-160, 830);
+    c.lineTo(40, 800);
+    c.closePath();
+    c.fill();
+    c.stroke();
+    arrowHead(c, -150, 808, Math.PI, 9 * u, COL.dim);
+
+    var x = G.sheetX0;
+    while (x < G.sheetX1) {
+      if (Math.abs(x - G.headX) > 34) {
+        c.fillStyle = "#2c3a4c";
+        c.fillRect(x, G.sheetTop + G.sheetTh, 5, 186);
+      }
+      x += 32;
+    }
+
+    drawSheet(c, cam);
+    drawCabinet(c, cam);
+    drawGantry(c, cam);
+    drawFiber(c, cam);
+    drawHead(c, cam);
+  }
+
+  function drawSheet(c, cam) {
+    var top = G.sheetTop;
+    var bot = top + G.sheetTh;
+    var hx = G.headX;
+    var kt = G.kerfTop;
+    var kb = G.kerfBot;
+    function leftPlate(p) {
+      p.moveTo(G.sheetX0, top);
+      p.lineTo(hx - kt, top);
+      p.lineTo(hx - kb, bot);
+      p.lineTo(G.sheetX0, bot);
+      p.closePath();
+    }
+    function rightPlate(p) {
+      p.moveTo(hx + kt, top);
+      p.lineTo(G.sheetX1, top);
+      p.lineTo(G.sheetX1, bot);
+      p.lineTo(hx + kb, bot);
+      p.closePath();
+    }
+    c.beginPath();
+    leftPlate(c);
+    rightPlate(c);
+    c.fillStyle = "#314050";
+    c.fill();
+    hatch(c, cam, function (p) { p.beginPath(); leftPlate(p); rightPlate(p); });
+    c.beginPath();
+    leftPlate(c);
+    rightPlate(c);
+    c.strokeStyle = "#51627a";
+    c.stroke();
+    c.beginPath();
+    c.moveTo(hx - kt, top);
+    c.lineTo(hx - kb, bot);
+    c.moveTo(hx + kt, top);
+    c.lineTo(hx + kb, bot);
+    c.strokeStyle = "#c5d0dc";
+    c.stroke();
+  }
+
+  function drawCabinet(c, cam) {
+    var x = -520;
+    var y = 120;
+    var w = 320;
+    var h = 640;
+    metal(c, function (p) { p.roundRect(x, y, w, h, 4); }, x, y, x + w, y + h);
+    hatch(c, cam, function (p) { p.roundRect(x, y, w, h, 4); });
+    var i;
+    for (i = 0; i < 5; i++) {
+      var dx = x + 36 + i * 52;
+      c.fillStyle = "#1b140c";
+      c.strokeStyle = COL.gold;
+      c.lineWidth = uOf(cam) * 1.4;
+      c.beginPath();
+      c.rect(dx, y + 48, 32, 46);
+      c.fill();
+      c.stroke();
+    }
+    c.beginPath();
+    c.moveTo(x + 52, y + 110);
+    c.lineTo(x + 150, y + 168);
+    c.strokeStyle = COL.gold;
+    c.stroke();
+    arrowHead(c, x + 146, y + 164, Math.atan2(58, 98), 10 * uOf(cam), COL.gold);
+
+    c.beginPath();
+    c.arc(x + 168, y + 250, 78, 0, Math.PI * 2);
+    c.fillStyle = "#121820";
+    c.strokeStyle = COL.struct;
+    c.lineWidth = uOf(cam) * 1.3;
+    c.fill();
+    c.stroke();
+    c.beginPath();
+    var turns = 3.2;
+    var steps = 90;
+    for (var s = 0; s <= steps; s++) {
+      var t = s / steps;
+      var ang = t * turns * Math.PI * 2;
+      var r = 16 + t * 52;
+      var px = x + 168 + Math.cos(ang) * r;
+      var py = y + 250 + Math.sin(ang) * r;
+      if (s === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = Math.max(1.6, 1.3 * uOf(cam));
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(x + 250, y + 230);
+    c.lineTo(x + 300, y + 116);
+    c.lineTo(-200, 236);
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 8;
+    c.stroke();
+    c.beginPath();
+    c.moveTo(x + 250, y + 230);
+    c.lineTo(x + 292, y + 150);
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = Math.max(1.5, 1.2 * uOf(cam));
+    c.stroke();
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = 1.2 * uOf(cam);
+    [-8, 8].forEach(function (shift) {
+      c.beginPath();
+      c.moveTo(x + 286 + shift, y + 168);
+      c.lineTo(x + 286 + shift, y + 196);
+      c.moveTo(x + 290 + shift, y + 172);
+      c.lineTo(x + 290 + shift, y + 192);
+      c.stroke();
+    });
+    c.fillStyle = "#243246";
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1.3 * uOf(cam);
+    c.beginPath();
+    c.rect(-214, 214, 28, 44);
+    c.fill();
+    c.stroke();
+  }
+
+  function drawGantry(c, cam) {
+    var u = uOf(cam);
+    metal(c, function (p) { p.rect(-24, 108, 1288, 40); }, -24, 108, 1264, 148);
+    metal(c, function (p) { p.rect(-24, 108, 34, 692); }, -24, 108, 10, 800);
+    metal(c, function (p) { p.rect(1230, 108, 34, 692); }, 1230, 108, 1264, 800);
+    c.fillStyle = "#121a24";
+    c.fillRect(690, 146, 180, 28);
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1.2 * u;
+    c.strokeRect(690, 146, 180, 28);
+    c.fillStyle = "#182230";
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1.2 * u;
+    c.beginPath();
+    c.rect(846, 146, 18, 130);
+    c.fill();
+    c.stroke();
+    c.strokeStyle = COL.gold;
+    c.lineWidth = 2 * u;
+    c.beginPath();
+    c.moveTo(855, 154);
+    c.lineTo(855, 268);
+    c.stroke();
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1.1 * u;
+    var link;
+    for (link = 0; link < 8; link++) {
+      c.strokeRect(80 + link * 70, 118, 46, 16);
+    }
+  }
+
+  function drawFiber(c, cam) {
+    var u = uOf(cam);
+    traceDelivery(c);
+    c.strokeStyle = "#1a2432";
+    c.lineWidth = 26;
+    c.stroke();
+    traceDelivery(c);
+    c.strokeStyle = "#3c4d64";
+    c.lineWidth = 26;
+    c.stroke();
+    traceDelivery(c);
+    c.strokeStyle = "#2a384c";
+    c.lineWidth = 18;
+    c.stroke();
+    traceDelivery(c);
+    c.strokeStyle = COL.cyan;
+    c.globalAlpha = 0.95;
+    c.lineWidth = Math.max(1.4 * u, 1.2);
+    c.stroke();
+    c.globalAlpha = 1;
+  }
+
+  function drawHead(c, cam) {
+    var u = uOf(cam);
+    var x = G.headX;
+    metal(c, function (p) { p.roundRect(x - 66, 156, 132, 196, 5); }, x - 66, 156, x + 66, 352);
+    hatch(c, cam, function (p) { p.roundRect(x - 66, 156, 132, 196, 5); });
+    var ng = c.createLinearGradient(x, 352, x, G.nozzleTip);
+    ng.addColorStop(0, "#8a624f");
+    ng.addColorStop(1, "#4e342c");
+    c.beginPath();
+    c.moveTo(x - 50, 352);
+    c.lineTo(x + 50, 352);
+    c.lineTo(x + 17, G.nozzleTip);
+    c.lineTo(x - 17, G.nozzleTip);
+    c.closePath();
+    c.fillStyle = ng;
+    c.fill();
+    c.strokeStyle = "#6b4a3c";
+    c.lineWidth = 1.3 * u;
+    c.stroke();
+    hatch(c, cam, function (p) {
+      p.moveTo(x - 50, 352);
+      p.lineTo(x + 50, 352);
+      p.lineTo(x + 17, G.nozzleTip);
+      p.lineTo(x - 17, G.nozzleTip);
+      p.closePath();
+    });
+    c.fillStyle = "#243044";
+    c.strokeStyle = COL.struct;
+    c.beginPath();
+    c.rect(x - 22, 142, 44, 22);
+    c.fill();
+    c.stroke();
+
+  }
+
+  function drawValve(c, cam) {
+    var u = uOf(cam);
+    var x = G.headX;
+    metal(c, function (p) { p.roundRect(x + 28, 356, 96, 36, 2); }, x + 28, 356, x + 124, 392);
+    c.strokeStyle = COL.gold;
+    c.lineWidth = 1.3 * u;
+    c.beginPath();
+    var w;
+    for (w = 0; w < 5; w++) {
+      c.moveTo(x + 40, 364 + w * 5);
+      c.lineTo(x + 64, 364 + w * 5);
+    }
+    c.moveTo(x + 66, 374);
+    c.lineTo(x + 104, 374);
+    c.stroke();
+  }
+
+  function cavityPath(c) {
+    var x = G.headX;
+    var tip = G.nozzleTip;
+    var top = G.sheetTop;
+    var bot = top + G.sheetTh;
+    c.beginPath();
+    c.moveTo(x - 20, 164);
+    c.lineTo(x + 20, 164);
+    c.lineTo(x + 20, 348);
+    c.lineTo(x + 12, 356);
+    c.lineTo(x + 6.2, tip);
+    c.lineTo(x + G.kerfTop, top);
+    c.lineTo(x + G.kerfBot, bot);
+    c.lineTo(x + 6, bot + 12);
+    c.lineTo(x - 6, bot + 12);
+    c.lineTo(x - G.kerfBot, bot);
+    c.lineTo(x - G.kerfTop, top);
+    c.lineTo(x - 6.2, tip);
+    c.lineTo(x - 12, 356);
+    c.lineTo(x - 20, 348);
+    c.closePath();
+  }
+
+  function drawBeamAndGas(c, cam) {
+    var u = uOf(cam);
+    var x = G.headX;
+    var y0 = 156;
+    var y1 = G.sheetTop + G.sheetTh - 1;
+    var left = [];
+    var right = [];
+    var y;
+    for (y = y0; y <= y1; y += 3) {
+      var h = beamHalf(y);
+      left.push([x - h, y]);
+      right.push([x + h, y]);
+    }
+    c.beginPath();
+    c.moveTo(left[0][0], left[0][1]);
+    left.forEach(function (p) { c.lineTo(p[0], p[1]); });
+    for (var i = right.length - 1; i >= 0; i--) c.lineTo(right[i][0], right[i][1]);
+    c.closePath();
+    c.fillStyle = "rgba(0,229,255,0.18)";
+    c.fill();
+    c.beginPath();
+    left.forEach(function (p, idx) { if (idx === 0) c.moveTo(p[0], p[1]); else c.lineTo(p[0], p[1]); });
+    c.moveTo(right[0][0], right[0][1]);
+    right.forEach(function (p) { c.lineTo(p[0], p[1]); });
+    c.setLineDash([6 * u, 7 * u]);
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = 1.15 * u;
+    c.stroke();
+    c.setLineDash([]);
+    c.beginPath();
+    c.moveTo(x, y0);
+    c.lineTo(x, y1);
+    c.lineWidth = 1.4 * u;
+    c.stroke();
+    var waistY = G.sheetTop + 1;
+    arrowHead(c, x, waistY + 6, Math.PI / 2, 7 * u, COL.cyan);
+
+    var gasA = loom(cam, 980, 640);
+    if (gasA > 0.02) {
+      c.save();
+      c.globalAlpha = gasA;
+      var exit = G.sheetTop + G.sheetTh + 8;
+      [-11, -6.5, 6.5, 11].forEach(function (side) {
+        c.beginPath();
+        c.moveTo(x + side, 366);
+        c.bezierCurveTo(x + side * 0.72, 402, x + side * 0.5, G.sheetTop, x + side * 0.38, exit);
+        c.strokeStyle = "rgba(230,237,245,0.8)";
+        c.lineWidth = 1.15 * u;
+        c.setLineDash([5 * u, 6 * u]);
+        c.stroke();
+        c.setLineDash([]);
+        arrowHead(c, x + side * 0.38, exit, Math.PI / 2, 6 * u, "rgba(230,237,245,0.85)");
+      });
+      c.restore();
+    }
+  }
+
+  function drawOptics(c, cam) {
+    var u = uOf(cam);
+    var x = G.headX;
+    lens(c, x, 228, 40, 8, u);
+    lens(c, x, 314, 46, 10, u);
+    c.fillStyle = "rgba(198,220,214,0.2)";
+    c.strokeStyle = "rgba(230,237,245,0.75)";
+    c.lineWidth = 1.1 * u;
+    c.beginPath();
+    c.rect(x - 18, 336, 36, 8);
+    c.fill();
+    c.stroke();
+  }
+  function lens(c, x, y, w, crown, u) {
+    c.beginPath();
+    c.moveTo(x - w / 2, y);
+    c.quadraticCurveTo(x, y - crown, x + w / 2, y);
+    c.quadraticCurveTo(x, y + crown, x - w / 2, y);
+    c.closePath();
+    c.fillStyle = "rgba(186,214,224,0.22)";
+    c.fill();
+    c.strokeStyle = "rgba(230,237,245,0.8)";
+    c.lineWidth = 1.15 * u;
+    c.stroke();
+  }
+
+  function drawSensorMeltHaz(c, cam, f) {
+    var u = uOf(cam);
+    var x = G.headX;
+    var top = G.sheetTop;
+    var bot = top + G.sheetTh;
+    var haz = loom(cam, 860, 560);
+    if (haz > 0.02) {
+      c.save();
+      c.globalAlpha = 0.22 * haz;
+      c.fillStyle = COL.violet;
+      var band = 7;
+      c.beginPath();
+      c.moveTo(x - G.kerfTop, top + 4);
+      c.lineTo(x - G.kerfTop - band, top + 8);
+      c.lineTo(x - G.kerfBot - band, bot - 3);
+      c.lineTo(x - G.kerfBot, bot - 1);
+      c.closePath();
+      c.moveTo(x + G.kerfTop, top + 4);
+      c.lineTo(x + G.kerfTop + band, top + 8);
+      c.lineTo(x + G.kerfBot + band, bot - 3);
+      c.lineTo(x + G.kerfBot, bot - 1);
+      c.closePath();
+      c.fill();
+      c.restore();
+    }
+    if (haz > 0.2) {
+      c.fillStyle = "#a8b4c2";
+      c.beginPath();
+      c.moveTo(x + G.kerfBot - 0.4, bot);
+      c.quadraticCurveTo(x + G.kerfBot + 6, bot + 1, x + G.kerfBot + 4.5, bot + 7);
+      c.quadraticCurveTo(x + G.kerfBot - 1, bot + 5, x + G.kerfBot - 0.4, bot);
+      c.fill();
+    }
+    var sense = loom(cam, 1100, 760);
+    if (sense > 0.02) {
+      c.save();
+      c.globalAlpha = sense;
+      c.strokeStyle = COL.violet;
+      c.lineWidth = 1.25 * u;
+      c.setLineDash([4 * u, 4 * u]);
+      [-1, 1].forEach(function (s) {
+        c.beginPath();
+        c.moveTo(x + s * 15, G.nozzleTip);
+        c.quadraticCurveTo(x + s * 24, (G.nozzleTip + top) / 2, x + s * 16, top + 1);
+        c.stroke();
+      });
+      c.setLineDash([]);
+      c.restore();
+    }
+    if (cam.w < 520 && f > 520 && f < 980) {
+      var clock = motionClock(f);
+      for (var i = 0; i < 3; i++) {
+        var period = 70;
+        var p = ((clock * 0.45 + i * 22) % period) / period;
+        var dy = bot - 8 + p * 36;
+        var dx = x + (i - 1) * 2.4;
+        c.globalAlpha = 0.4 + (1 - p) * 0.6;
+        c.fillStyle = "#d5dde6";
+        c.beginPath();
+        c.ellipse(dx, dy, 1.5, 2.2, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.globalAlpha = 1;
+    }
+  }
+
+  function arrowHead(c, x, y, ang, size, color) {
+    c.save();
+    c.translate(x, y);
+    c.rotate(ang);
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.lineTo(-size, -size * 0.55);
+    c.lineTo(-size, size * 0.55);
+    c.closePath();
+    c.fillStyle = color;
+    c.fill();
+    c.restore();
+  }
+
+  function screenChips(c, f) {
+    var rows = [];
+    if (f < 150) rows.push(["SCALE  ·  machine, with an enlarged fiber section", COL.bone]);
+    else if (f < 300) rows.push(["SCALE CHANGE  ·  head section", COL.cyan]);
+    else if (f < 510) rows.push(["SCALE CHANGE  ·  nozzle and standoff", COL.cyan]);
+    else if (f < 750) rows.push(["SCALE CHANGE  ·  cut zone enlarged. Ratios are not measured.", COL.cyan]);
+    else if (f < 960) rows.push(["SCALE CHANGE  ·  returning to machine scale", COL.cyan]);
+    else rows.push(["SCALE  ·  complete machine", COL.bone]);
+    if (f >= 170 && f <= 780) rows.push(["LONGITUDINAL SECTION  ·  near covers omitted", COL.dim]);
+    if (f >= 510 && f < 750) rows.push(["SLOW MOTION  ·  cutting front. Not process time.", COL.gold]);
+    if (f >= 750) rows.push(["TIME COMPRESSION  ·  contour shown complete. No feed rate.", COL.gold]);
+    if (f >= 960) rows.push(["HOLD  ·  complete system", COL.bone]);
+    var y = 22;
+    c.font = "600 13px Inter, DejaVu Sans, sans-serif";
+    c.textBaseline = "top";
+    rows.forEach(function (row) {
+      var text = row[0];
+      var color = row[1];
+      var w = c.measureText(text).width + 16;
+      c.fillStyle = "rgba(11,16,25,0.9)";
+      c.strokeStyle = color;
+      c.lineWidth = 1;
+      c.beginPath();
+      c.roundRect(20, y, w, 24, 2);
+      c.fill();
+      c.stroke();
+      c.fillStyle = COL.bone;
+      c.fillText(text, 28, y + 5);
+      y += 30;
+    });
+  }
+
+  function drawLabels(c, cam, f) {
+    c.font = "600 14px Inter, DejaVu Sans, sans-serif";
+    c.textBaseline = "middle";
+    LABELS.forEach(function (lb) {
+      var alpha = windowAlpha(f, lb.a, lb.b, 12, lb.hold);
+      if (alpha <= 0) return;
+      if (lb.minW && cam.w < lb.minW) return;
+      if (lb.maxW && cam.w > lb.maxW) return;
+      var p = worldToScreen(cam, lb.x, lb.y);
+      if (p.x < -80 || p.y < -80 || p.x > STAGE_W + 80 || p.y > STAGE_H + 80) return;
+      var tw = c.measureText(lb.text).width;
+      var w = tw + 16;
+      var h = 24;
+      var px = clamp(p.x + lb.dx, 14, STAGE_W - w - 14);
+      var py = clamp(p.y + lb.dy, 14, STAGE_H - h - 14);
+      c.save();
+      c.globalAlpha = alpha;
+      c.strokeStyle = lb.color;
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(p.x, p.y);
+      c.lineTo(px, py + h / 2);
+      c.stroke();
+      c.fillStyle = lb.color;
+      c.beginPath();
+      c.arc(p.x, p.y, 2.4, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = "rgba(11,16,25,0.9)";
+      c.beginPath();
+      c.roundRect(px, py, w, h, 2);
+      c.fill();
+      c.stroke();
+      c.fillStyle = COL.bone;
+      c.fillText(lb.text, px + 8, py + h / 2 + 0.5);
+      c.restore();
+    });
+  }
+
+  function drawFiberInset(c, f) {
+    var a = windowAlpha(f, 28, 136, 12);
+    if (a <= 0) return;
+    c.save();
+    c.globalAlpha = a;
+    var x = 1248;
+    var y = 640;
+    panel(c, x, y, 280, 210, "ACTIVE FIBER  ·  ENLARGED DIAGRAM");
+    var cx = x + 78;
+    var cy = y + 118;
+    ring(c, cx, cy, 62, "#1c2633", COL.struct);
+    ring(c, cx, cy, 40, "#243246", "#7f8fa3");
+    ring(c, cx, cy, 8, "rgba(0,229,255,0.35)", COL.cyan);
+    c.font = "12px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.bone;
+    c.fillText("Core, laser light", x + 150, y + 78);
+    c.fillText("Cladding, pump light", x + 150, y + 100);
+    c.fillText("Coating", x + 150, y + 122);
+    c.font = "11px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.dim;
+    c.fillText("Core drawn larger than", x + 16, y + 176);
+    c.fillText("a real fiber. Schematic.", x + 16, y + 192);
+    c.restore();
+  }
+  function ring(c, cx, cy, r, fill, stroke) {
+    c.beginPath();
+    c.arc(cx, cy, r, 0, Math.PI * 2);
+    c.fillStyle = fill;
+    c.fill();
+    c.strokeStyle = stroke;
+    c.lineWidth = 1.25;
+    c.stroke();
+  }
+  function panel(c, x, y, w, h, title) {
+    c.fillStyle = "rgba(11,16,25,0.92)";
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1;
+    c.beginPath();
+    c.roundRect(x, y, w, h, 2);
+    c.fill();
+    c.stroke();
+    c.font = "600 11px JetBrains Mono, DejaVu Sans Mono, monospace";
+    c.fillStyle = COL.dim;
+    c.textBaseline = "top";
+    c.fillText(title, x + 12, y + 10);
+  }
+
+  function drawIntensityInset(c, f) {
+    var a = windowAlpha(f, 188, 308, 14);
+    if (a <= 0) return;
+    c.save();
+    c.globalAlpha = a;
+    var x = 36;
+    var y = 560;
+    panel(c, x, y, 280, 200, "INTENSITY  ·  SHAPE ONLY, NO UNITS");
+    c.beginPath();
+    c.moveTo(x + 36, y + 158);
+    c.lineTo(x + 250, y + 158);
+    c.moveTo(x + 48, y + 168);
+    c.lineTo(x + 48, y + 46);
+    c.strokeStyle = COL.dim;
+    c.lineWidth = 1;
+    c.stroke();
+    c.beginPath();
+    for (var i = 0; i <= 64; i++) {
+      var t = i / 64;
+      var z = t * 2 - 1;
+      var px = x + 56 + t * 180;
+      var py = y + 158 - Math.exp(-z * z * 3.4) * 96;
+      if (i === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = 1.6;
+    c.stroke();
+    c.font = "11px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.dim;
+    c.fillText("across the waist", x + 150, y + 172);
+    c.restore();
+  }
+
+  function drawFaceInset(c, f) {
+    var a = windowAlpha(f, 545, 760, 16);
+    if (a <= 0) return;
+    c.save();
+    c.globalAlpha = a;
+    var x = 24;
+    var y = 118;
+    panel(c, x, y, 250, 230, "CUT FACE  ·  DIAGRAM");
+    c.fillStyle = "#314050";
+    c.fillRect(x + 28, y + 48, 90, 150);
+    c.strokeStyle = "#8ea0b4";
+    c.strokeRect(x + 28, y + 48, 90, 150);
+    c.strokeStyle = "rgba(230,237,245,0.55)";
+    c.lineWidth = 1;
+    for (var i = 0; i < 9; i++) {
+      var yy = y + 62 + i * 14;
+      c.beginPath();
+      c.moveTo(x + 32, yy);
+      c.bezierCurveTo(x + 52, yy - 4, x + 78, yy + 4, x + 112, yy);
+      c.stroke();
+    }
+    c.font = "12px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.bone;
+    c.fillText("Striations", x + 132, y + 90);
+    c.font = "11px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.dim;
+    c.fillText("Spacing is not", x + 132, y + 116);
+    c.fillText("a feed rate.", x + 132, y + 132);
+    c.restore();
+  }
+
+  function drawPlanInset(c, f) {
+    var a = windowAlpha(f, 860, 1019, 18, true);
+    if (a <= 0) return;
+    c.save();
+    c.globalAlpha = a;
+    var x = 24;
+    var y = 620;
+    panel(c, x, y, 340, 210, "PLAN  ·  SECOND VIEW");
+    c.strokeStyle = COL.struct;
+    c.lineWidth = 1;
+    c.strokeRect(x + 16, y + 40, 200, 150);
+    c.strokeStyle = COL.cyan;
+    c.lineWidth = 1.5;
+    c.strokeRect(x + 48, y + 68, 136, 96);
+    c.fillStyle = COL.gold;
+    c.fillRect(x + 110, y + 160, 8, 8);
+    c.font = "12px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.bone;
+    c.fillText("Head", x + 228, y + 78);
+    c.fillText("Finished contour", x + 228, y + 100);
+    c.font = "11px Inter, DejaVu Sans, sans-serif";
+    c.fillStyle = COL.dim;
+    c.fillText("Time-compressed.", x + 228, y + 128);
+    c.fillText("No feed rate.", x + 228, y + 146);
+    c.fillText("X across, Y up.", x + 228, y + 172);
+    c.restore();
+  }
+
+  function drawVignette(c) {
+    var g = c.createRadialGradient(800, 450, 280, 800, 450, 980);
+    g.addColorStop(0, "rgba(0,0,0,0)");
+    g.addColorStop(1, "rgba(0,0,0,0.28)");
+    c.fillStyle = g;
+    c.fillRect(0, 0, STAGE_W, STAGE_H);
+  }
+
+  function draw(f) {
+    var cam = cameraAt(f);
+    ctx.setTransform(2, 0, 0, 2, 0, 0);
+    ctx.clearRect(0, 0, STAGE_W, STAGE_H);
+    ctx.fillStyle = COL.stage;
+    ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+    ctx.save();
+    ctx.translate(STAGE_W / 2, STAGE_H / 2);
+    ctx.scale(STAGE_W / cam.w, STAGE_W / cam.w);
+    ctx.translate(-cam.x, -cam.y);
+    drawGrid(ctx, cam);
+    drawMachine(ctx, cam);
+    ctx.save();
+    cavityPath(ctx);
+    ctx.fillStyle = "#0c121b";
+    ctx.fill();
+    ctx.strokeStyle = "#42536a";
+    ctx.lineWidth = 1.15 * uOf(cam);
+    ctx.stroke();
+    ctx.restore();
+    drawValve(ctx, cam);
+    ctx.save();
+    cavityPath(ctx);
+    ctx.clip();
+    drawBeamAndGas(ctx, cam);
+    ctx.restore();
+    drawOptics(ctx, cam);
+    drawSensorMeltHaz(ctx, cam, f);
+    ctx.restore();
+    drawVignette(ctx);
+    screenChips(ctx, f);
+    drawLabels(ctx, cam, f);
+    drawFiberInset(ctx, f);
+    drawIntensityInset(ctx, f);
+    drawFaceInset(ctx, f);
+    drawPlanInset(ctx, f);
+    if (debug) {
+      ctx.font = "12px monospace";
+      ctx.fillStyle = COL.gold;
+      ctx.fillText("cam " + cam.x.toFixed(0) + " " + cam.y.toFixed(0) + " " + cam.w.toFixed(0), 20, STAGE_H - 16);
+    }
+    return cam;
+  }
+
+  function timecode(f) {
+    var ms = Math.round(f * 1000 / 30);
+    var s = Math.floor(ms / 1000);
+    var m = Math.floor(s / 60);
+    var rem = s % 60;
+    var tenth = Math.floor((ms % 1000) / 100);
+    return String(m).padStart(2, "0") + ":" + String(rem).padStart(2, "0") + "." + tenth;
+  }
+  function syncHud(f) {
+    var seg = segmentAt(f);
+    document.getElementById("tc").textContent = timecode(f);
+    document.getElementById("fr").textContent = "Frame " + String(f).padStart(4, "0") + " / 1019";
+    document.getElementById("seg").textContent = seg.title;
+    captionEl.textContent = seg.caption;
+    if (!scrubbing) scrub.value = String(f);
+    scrub.setAttribute("aria-valuenow", String(f));
+    scrub.setAttribute("aria-valuetext", timecode(f) + ", " + seg.title);
+    var buttons = document.querySelectorAll(".rail button");
+    buttons.forEach(function (btn) {
+      var start = Number(btn.getAttribute("data-frame"));
+      var mine = SEGMENTS.filter(function (s) { return s.start === start; })[0];
+      btn.setAttribute("aria-current", mine && f >= mine.start && f <= mine.end ? "true" : "false");
+    });
+    if (f >= LAST && !playing) playBtn.textContent = "Replay";
+    else playBtn.textContent = playing ? "Pause" : "Play";
+  }
+
+  function render(f) {
+    try {
+      draw(f);
+    } catch (err) {
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
+      ctx.fillStyle = "#E6EDF5";
+      ctx.font = "16px monospace";
+      ctx.fillText(String(err && err.message ? err.message : err), 24, 40);
+      if (err && err.stack) ctx.fillText(err.stack.split("\n")[1] || "", 24, 64);
+    }
+    syncHud(f);
+  }
+
+  function loop(now) {
+    if (playing) {
+      var next = playFrame0 + Math.floor((now - playOrigin) / (1000 / 30));
+      if (next >= LAST) {
+        frame = LAST;
+        playing = false;
+      } else {
+        frame = next;
+      }
+    }
+    render(frame);
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  function playFrom(f) {
+    frame = clamp(f, 0, LAST);
+    if (frame >= LAST) frame = 0;
+    playFrame0 = frame;
+    playOrigin = performance.now();
+    playing = true;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+  function pause() {
+    playing = false;
+    cancelAnimationFrame(raf);
+    render(frame);
+  }
+
+  playBtn.addEventListener("click", function () {
+    if (playing) pause();
+    else playFrom(frame >= LAST ? 0 : frame);
+  });
+  scrub.addEventListener("pointerdown", function () { scrubbing = true; playing = false; });
+  window.addEventListener("pointerup", function () { scrubbing = false; });
+  scrub.addEventListener("input", function () {
+    frame = clamp(Number(scrub.value), 0, LAST);
+    playing = false;
+    render(frame);
+  });
+  document.querySelectorAll(".rail button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      frame = Number(btn.getAttribute("data-frame"));
+      if (playing) playFrom(frame);
+      else render(frame);
+    });
+  });
+  window.addEventListener("keydown", function (e) {
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (tag === "INPUT" || tag === "SUMMARY") return;
+    if (e.key === " " || e.key.indexOf("Arrow") === 0 || e.key === "Home" || e.key === "End") e.preventDefault();
+    if (e.key === " ") {
+      if (playing) pause();
+      else playFrom(frame >= LAST ? 0 : frame);
+    } else if (e.key === "ArrowRight") {
+      pause();
+      frame = clamp(frame + (e.shiftKey ? 30 : 1), 0, LAST);
+      render(frame);
+    } else if (e.key === "ArrowLeft") {
+      pause();
+      frame = clamp(frame - (e.shiftKey ? 30 : 1), 0, LAST);
+      render(frame);
+    } else if (e.key === "Home") {
+      pause();
+      frame = 0;
+      render(frame);
+    } else if (e.key === "End") {
+      pause();
+      frame = LAST;
+      render(frame);
+    } else if (e.key >= "1" && e.key <= "5") {
+      var seg = SEGMENTS[Number(e.key) - 1];
+      frame = seg.start;
+      if (playing) playFrom(frame);
+      else render(frame);
+    }
+  });
+
+  if (reduce) {
+    document.getElementById("keys").textContent = "Reduced motion is on. The film stays on the frame you select. " + document.getElementById("keys").textContent;
+  }
+  window.renderFrame = function (n) {
+    frame = clamp(n, 0, LAST);
+    playing = false;
+    render(frame);
+    return cameraAt(frame);
+  };
+  render(frame);
+  if (playing) {
+    playOrigin = performance.now();
+    playFrame0 = frame;
+    raf = requestAnimationFrame(loop);
+  }
+})();
+</script>
+</body>
+</html>
