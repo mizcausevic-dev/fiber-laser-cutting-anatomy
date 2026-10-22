@@ -869,16 +869,16 @@
 
   function screenChips(c, f) {
     var rows = [];
-    if (f < 150) rows.push(["SCALE  \u00b7  machine, with an enlarged fiber section", COL.bone]);
-    else if (f < 300) rows.push(["SCALE CHANGE  \u00b7  head section", COL.cyan]);
-    else if (f < 510) rows.push(["SCALE CHANGE  \u00b7  nozzle and standoff", COL.cyan]);
-    else if (f < 750) rows.push(["SCALE CHANGE  \u00b7  cut zone enlarged. Ratios are not measured.", COL.cyan]);
-    else if (f < 960) rows.push(["SCALE CHANGE  \u00b7  returning to machine scale", COL.cyan]);
-    else rows.push(["SCALE  \u00b7  complete machine", COL.bone]);
-    if (f >= 170 && f <= 780) rows.push(["LONGITUDINAL SECTION  \u00b7  near covers omitted", COL.dim]);
-    if (f >= 510 && f < 750) rows.push(["SLOW MOTION  \u00b7  cutting front. Not process time.", COL.gold]);
-    if (f >= 750) rows.push(["TIME COMPRESSION  \u00b7  contour shown complete. No feed rate.", COL.gold]);
-    if (f >= 960) rows.push(["HOLD  \u00b7  complete system", COL.bone]);
+    if (f < 150) rows.push(["SCALE  ·  machine, with an enlarged fiber section", COL.bone]);
+    else if (f < 300) rows.push(["SCALE CHANGE  ·  head section", COL.cyan]);
+    else if (f < 510) rows.push(["SCALE CHANGE  ·  nozzle and standoff", COL.cyan]);
+    else if (f < 750) rows.push(["SCALE CHANGE  ·  cut zone enlarged. Ratios are not measured.", COL.cyan]);
+    else if (f < 960) rows.push(["SCALE CHANGE  ·  returning to machine scale", COL.cyan]);
+    else rows.push(["SCALE  ·  complete machine", COL.bone]);
+    if (f >= 170 && f <= 780) rows.push(["LONGITUDINAL SECTION  ·  near covers omitted", COL.dim]);
+    if (f >= 510 && f < 750) rows.push(["SLOW MOTION  ·  cutting front. Not process time.", COL.gold]);
+    if (f >= 750) rows.push(["TIME COMPRESSION  ·  contour shown complete. No feed rate.", COL.gold]);
+    if (f >= 960) rows.push(["HOLD  ·  complete system", COL.bone]);
     var y = 22;
     c.font = "600 13px Inter, DejaVu Sans, sans-serif";
     c.textBaseline = "top";
@@ -944,7 +944,7 @@
     c.globalAlpha = a;
     var x = 1248;
     var y = 640;
-    panel(c, x, y, 280, 210, "ACTIVE FIBER  \u00b7  ENLARGED DIAGRAM");
+    panel(c, x, y, 280, 210, "ACTIVE FIBER  ·  ENLARGED DIAGRAM");
     var cx = x + 78;
     var cy = y + 118;
     ring(c, cx, cy, 62, "#1c2633", COL.struct);
@@ -991,7 +991,7 @@
     c.globalAlpha = a;
     var x = 36;
     var y = 560;
-    panel(c, x, y, 280, 200, "INTENSITY  \u00b7  SHAPE ONLY, NO UNITS");
+    panel(c, x, y, 280, 200, "INTENSITY  ·  SHAPE ONLY, NO UNITS");
     c.beginPath();
     c.moveTo(x + 36, y + 158);
     c.lineTo(x + 250, y + 158);
@@ -1025,7 +1025,7 @@
     c.globalAlpha = a;
     var x = 24;
     var y = 118;
-    panel(c, x, y, 250, 230, "CUT FACE  \u00b7  DIAGRAM");
+    panel(c, x, y, 250, 230, "CUT FACE  ·  DIAGRAM");
     c.fillStyle = "#314050";
     c.fillRect(x + 28, y + 48, 90, 150);
     c.strokeStyle = "#8ea0b4";
@@ -1056,7 +1056,7 @@
     c.globalAlpha = a;
     var x = 24;
     var y = 620;
-    panel(c, x, y, 340, 210, "PLAN  \u00b7  SECOND VIEW");
+    panel(c, x, y, 340, 210, "PLAN  ·  SECOND VIEW");
     c.strokeStyle = COL.struct;
     c.lineWidth = 1;
     c.strokeRect(x + 16, y + 40, 200, 150);
